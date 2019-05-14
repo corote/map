@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -14,15 +14,23 @@ declare var google;
 })
 export class HomePage {
 
-// variáveis usadas no login/cadastro
+  // variáveis usadas no login/cadastro
   nome: string;
   private PATH = 'usuarios';
   uid: string;
 
-// variável utilizada no mapa
+  // variável utilizada no mapa
   directionsService = new google.maps.DirectionsService();
   directionsDisplay = new google.maps.DirectionsRenderer();
+
+  // BRUNO FIXME 
+  // Bu, o negócio é o seguinte
+  // Para você conseguir acessar algum elemento que você colocou no arquivo .html (template)
+  // em uma variável aqui você tem que fazer esse esquema 
+  // de ViewChild e ElementRef
+  @ViewChild('map') mapElement: ElementRef;
   map: any;
+
   startPosition: any;
   originPosition: string;
   destinationPosition: string;
@@ -34,15 +42,15 @@ export class HomePage {
     private toast: ToastController,
     private db: AngularFireDatabase,
     private geolocation: Geolocation,
-    ){}
+  ) { }
 
-    ionViewDidLoad(){
-      this.exibeUser();
-      this.initializeMap();
-    }
+  ionViewDidLoad() {
+    this.exibeUser();
+    this.initializeMap();
+  }
 
-    initializeMap(){
-      this.geolocation.getCurrentPosition()
+  initializeMap() {
+    this.geolocation.getCurrentPosition()
       .then((res) => {
         this.startPosition = new google.maps.LatLng(res.coords.latitude, res.coords.longitude);
 
@@ -52,35 +60,40 @@ export class HomePage {
           disableDefaultUI: true
         }
 
-        this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        // BRUNO FIXME
+        // Aí aqui sim ao invés de usar document.getElementById
+        // você usa com aquela variável da linha 31 que é adicionada
+        // ao this neste arquivo
+        // this.mapElement.nativeElement
+        this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
         this.directionsDisplay.setMap(this.map);
 
       }).catch((err) => {
         console.log('Vish mano, deu ruim', err);
       });
-    }
+  }
 
-    calculateRoute(){
-      if(this.destinationPosition && this.startPosition){
-        const request = {
-          origin: this.startPosition,
-          destination: this.destinationPosition,
-          travelMode: 'DRIVING'
-        };
-        this.traceRoute(this.directionsService, this.directionsDisplay, request);
+  calculateRoute() {
+    if (this.destinationPosition && this.startPosition) {
+      const request = {
+        origin: this.startPosition,
+        destination: this.destinationPosition,
+        travelMode: 'DRIVING'
+      };
+      this.traceRoute(this.directionsService, this.directionsDisplay, request);
+    }
+  }
+
+  traceRoute(service: any, display: any, request: any) {
+    service.route(request, function (result, status) {
+      if (status == 'OK') {
+        display.setDirections(result);
       }
-    }
+    });
+  }
 
-    traceRoute(service: any, display: any, request: any){
-      service.route(request, function(result, status){
-        if(status == 'OK'){
-          display.setDirections(result);
-        }
-      });
-    }
 
-  
-  exibeUser(){
+  exibeUser() {
     this.afAuth.authState.subscribe(data => {
       if (data && data.email && data.uid) {
         this.uid = data.uid;
