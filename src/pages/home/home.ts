@@ -66,6 +66,16 @@ export class HomePage {
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl
     }));
+
+    this.geolocation.getCurrentPosition()
+      .then((response) => {
+        this.startPosition = response.coords;
+        map.setCenter([this.startPosition.longitude, this.startPosition.latitude]);
+
+        var marker = new mapboxgl.Marker()
+          .setLngLat([this.startPosition.longitude, this.startPosition.latitude])
+          .addTo(map);
+      })
   }
 
   initializeMap() {
