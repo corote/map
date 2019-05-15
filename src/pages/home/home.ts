@@ -3,6 +3,8 @@ import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angu
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Geolocation } from '@ionic-native/geolocation';
+import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
 declare var google;
 
@@ -46,7 +48,24 @@ export class HomePage {
 
   ionViewDidLoad() {
     this.exibeUser();
-    this.initializeMap();
+    // this.initializeMap();
+    this.initializeMapbox();
+  }
+
+  initializeMapbox() {
+    // chave da api
+    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9hb25ldHRvbWUiLCJhIjoiU1BhZGROYyJ9.sodwEG5A7ooeniSBtwsg6A';
+    const map = new mapboxgl.Map({
+      container: this.mapElement.nativeElement,
+      style: 'mapbox://styles/mapbox/streets-v9',
+      zoom: 13,
+      center: [-48.8769, -23.9793]
+    });
+
+    map.addControl(new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl
+    }));
   }
 
   initializeMap() {
