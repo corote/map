@@ -62,11 +62,6 @@ export class HomePage {
       center: [-48.8769, -23.9793]
     });
 
-    // map.addControl(new MapboxGeocoder({
-    //   accessToken: mapboxgl.accessToken,
-    //   mapboxgl: mapboxgl
-    // }));
-
     var directions = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
       unit: 'metric',
@@ -81,10 +76,12 @@ export class HomePage {
     });
     map.addControl(directions, 'top-left');
 
+
     this.geolocation.getCurrentPosition()
       .then((response) => {
         this.startPosition = response.coords;
         map.setCenter([this.startPosition.longitude, this.startPosition.latitude]);
+        directions.setOrigin([this.startPosition.longitude, this.startPosition.latitude]);
 
         var marker = new mapboxgl.Marker()
           .setLngLat([this.startPosition.longitude, this.startPosition.latitude])
