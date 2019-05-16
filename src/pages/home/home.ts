@@ -76,6 +76,13 @@ export class HomePage {
     });
     map.addControl(directions, 'top-left');
 
+    directions.on('destination', function (feature) {
+      // feature.geometry: { type: "Point", coordinates: Array(2) }
+      // feature.properties: { id: "destination", marker - symbol: "B" }
+      // feature.type: "Feature"
+      // alert('opa selecionei um destino');
+    });
+
 
     this.geolocation.getCurrentPosition()
       .then((response) => {
