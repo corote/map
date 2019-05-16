@@ -4,7 +4,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Geolocation } from '@ionic-native/geolocation';
 import mapboxgl from 'mapbox-gl';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions'
 
 declare var google;
 
@@ -62,10 +62,24 @@ export class HomePage {
       center: [-48.8769, -23.9793]
     });
 
-    map.addControl(new MapboxGeocoder({
+    // map.addControl(new MapboxGeocoder({
+    //   accessToken: mapboxgl.accessToken,
+    //   mapboxgl: mapboxgl
+    // }));
+
+    var directions = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
-      mapboxgl: mapboxgl
-    }));
+      unit: 'metric',
+      profile: 'mapbox/driving-traffic',
+      congestion: true,
+      controls: {
+        instructions: false,
+        profileSwitcher: false
+      },
+      placeholderOrigin: 'Informe sua localização atual',
+      placeholderDestination: 'Para onde você quer ir?'
+    });
+    map.addControl(directions, 'top-left');
 
     this.geolocation.getCurrentPosition()
       .then((response) => {
