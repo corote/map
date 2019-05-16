@@ -1,9 +1,18 @@
 page-home {
-    #map{
-        height: 100%;
-    }
+  #map {
+    height: 100%;
+  }
 
-    ion-input{
-        font-size: 18px;
-    }
+  ion-input {
+    font-size: 18px;
+  }
+
+  .mapboxgl-ctrl-top-left {
+    width: 97%;
+  }
+
+  .mapboxgl-ctrl-directions.mapboxgl-ctrl {
+    width: 100%;
+    max-width: 100%;
+  }
 }
